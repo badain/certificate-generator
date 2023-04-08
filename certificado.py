@@ -50,7 +50,7 @@ def generate_strings(name, role, hours):
         }
     ]
 
-def generate_certificate(name, certificate_name, today, background_path, certificate_string):
+def generate_certificate(name, certificate_name, today, background_path, certificate_string, signatures):
     # canvas initialization
     clean_name = re.sub(r'[^0-9a-zA-Z]+', '', unidecode(name))
     filename = f'certificados/{today}_{certificate_name}_{clean_name}.pdf' # generates certificate filename 
@@ -80,9 +80,17 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
         c.drawString(x, y, line["string"]) # draw string
         y -= 1.275 * cm # decreases y height for next line
 
+    # certificate signature
+    c.setFont('LibreCaslon', 10)
+    y = 3.63 * cm
+    if(len(signatures) == 1):
+        x = 13.83 * cm
+        for key, string in signatures[0].items():
+            c.drawString(x, y, string, charSpace=-0.25)
+            y -= 0.46 * cm
+
     # save as PDF file
     c.save()
-
 
 if __name__ == "__main__":
     data = []
@@ -91,9 +99,15 @@ if __name__ == "__main__":
         for row in reader:
             data.append(row)
 
+    signatures = []
+    with open('signature.csv', newline='', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
+        for row in reader:
+            signatures.append(row)
+
     today = date.today()
     total = len(data)
     for i, person in enumerate(data):
         print_progress(i, total)
         certificate_string = generate_strings(person['nome'], person['cargo'], person['horas'])
-        generate_certificate(person['nome'], "FEBRACE", today, "background/background.png", certificate_string)
+        generate_certificate(person['nome'], "FEBRACE", today, "background/background.png", certificate_string, signatures)
