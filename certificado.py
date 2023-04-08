@@ -7,7 +7,7 @@ from reportlab.pdfbase import pdfmetrics     # custom font support
 from reportlab.pdfbase.ttfonts import TTFont # custom font support
 
 # Python Modules
-import csv                # data import
+import csv                      # data import
 import re                       # filename processing
 from datetime import date       # filename processing
 from unidecode import unidecode # filename processing
