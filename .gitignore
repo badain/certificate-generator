@@ -1,3 +1,10 @@
+# Certificates Data
+*.psd
+*.pdf
+*.ttf
+*.csv
+background/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
