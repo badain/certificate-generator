@@ -43,35 +43,7 @@ def replace_json_variables(json_file_path, variables):
 
     return json_data
 
-def draw_febracm_avaliadores(c, certificate_string, signatures):
-    # certificate body
-    c.setFillColorRGB(0.01, 0.01, 0.01) # set font color
-    y = 16 * cm # initial y height
-    for line in certificate_string:
-        # set font style
-        if   line["style"] == "regular": c.setFont('LibreCaslon', 14)
-        elif line["style"] == "italic":  c.setFont('LibreCaslon-Italic', 14)
-        elif line["style"] == "bold":    c.setFont('LibreCaslon-Bold', 18)
-
-        # center string
-        text_width = c.stringWidth(line["string"])
-        x = (A4[1] - text_width) / 2
-        
-        c.drawString(x, y, line["string"]) # draw string
-        y -= 1.275 * cm # decreases y height for next line
-
-    # certificate signature
-    c.setFont('LibreCaslon', 10)
-    y = 3.63 * cm
-    if(len(signatures) == 1):
-        x = 13.83 * cm
-        for key, string in signatures[0].items():
-            c.drawString(x, y, string, charSpace=-0.25)
-            y -= 0.46 * cm
-
-    return
-
-def generate_certificate(name, certificate_name, today, background_path, certificate_string, signatures, template):
+def generate_certificate(name, certificate_name, today, background_path, certificate_string, signatures):
     # canvas initialization
     clean_name = re.sub(r'[^0-9a-zA-Z]+', '', unidecode(name))
     filename = f'certificados/{today}_{certificate_name}_{clean_name}.pdf' # generates certificate filename 
@@ -90,8 +62,42 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
         print(f"Imagem de fundo não encontrada")
         sys.exit()
 
-    # draw selected template
-    if(template == "febracm_avaliadores"): draw_febracm_avaliadores(c, certificate_string, signatures)
+    # certificate body
+    c.setFillColorRGB(0.01, 0.01, 0.01) # set font color
+    y = 16 * cm # initial y height
+    for line in certificate_string:
+        # set font style
+        if   line["style"] == "regular": c.setFont('LibreCaslon', 14)
+        elif line["style"] == "italic":  c.setFont('LibreCaslon-Italic', 14)
+        elif line["style"] == "bold":    c.setFont('LibreCaslon-Bold', 18)
+
+        # center string
+        text_width = c.stringWidth(line["string"])
+        x = (A4[1] - text_width) / 2
+        
+        c.drawString(x, y, line["string"]) # draw string
+        y -= 1.275 * cm # decreases y height for next line
+
+    # certificate signature
+    c.setFont('LibreCaslon', 10)
+    if(len(signatures) == 1):
+        x = 13.83 * cm
+        y = 3.63 * cm
+        for key, string in signatures[0].items():
+            c.drawString(x, y, string, charSpace=-0.25)
+            y -= 0.46 * cm
+    if(len(signatures) == 2):
+        x = 2.795 * cm
+        y = 3.63 * cm
+        for key, string in signatures[0].items():
+            c.drawString(x, y, string, charSpace=-0.25)
+            y -= 0.46 * cm
+        x = 18.425 * cm
+        y = 3.63 * cm
+        for key, string in signatures[1].items():
+            c.drawString(x, y, string, charSpace=-0.25)
+            y -= 0.46 * cm
+
 
     # save as PDF file
     c.save()
@@ -127,4 +133,4 @@ if __name__ == "__main__":
     for i, person in enumerate(data):
         print_progress(i, total)
         certificate_string = replace_json_variables(f"{args.strings}", person)
-        generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures, args.template)
+        generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures)
