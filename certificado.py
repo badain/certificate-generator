@@ -65,9 +65,10 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
 
     # draw certificate background
     try:
-        c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
+        if background_path: c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
+        else: print("Imagem de fundo não especificada")
     except OSError as e:
-        print(f"{type(e)}: {e}")
+        print(f"Imagem de fundo não encontrada")
         sys.exit()
 
     # certificate body
