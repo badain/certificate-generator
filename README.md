@@ -30,7 +30,7 @@ O programa depende de arquivos especiais, que devem ser obtidos em outras fontes
 nome, cargo, horas
 "Sedento do Saber", "Banca de Avaliação", "30"
 ```
-- `signature.csv`é o arquivo csv que contém o nome e título da(s) pessoa(s) assinante do certificado, no formato:
+- `assinantes.csv`é o arquivo csv que contém o nome e título da(s) pessoa(s) assinante do certificado, no formato:
 ```
 nome,titulo
 Prof.ª Dr.ª Mestra do Conhecimento,Coordenadora do Curso de Ciências Moleculares
