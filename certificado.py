@@ -7,6 +7,7 @@ from reportlab.pdfbase import pdfmetrics     # custom font support
 from reportlab.pdfbase.ttfonts import TTFont # custom font support
 
 # Python Modules
+import sys                      # exception handling
 import csv                      # data import
 import re                       # filename processing
 from datetime import date       # filename processing
@@ -62,7 +63,11 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
     pdfmetrics.registerFont(TTFont('LibreCaslon-Bold',   'LibreCaslonText-Bold.ttf'))
 
     # draw certificate background
-    c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
+    try:
+        c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
+    except OSError as e:
+        print(f"{type(e)}: {e}")
+        sys.exit()
 
     # certificate body
     c.setFillColorRGB(0.01, 0.01, 0.01) # set font color
