@@ -52,25 +52,7 @@ def generate_strings(name, role, hours):
         }
     ]
 
-def generate_certificate(name, certificate_name, today, background_path, certificate_string, signatures):
-    # canvas initialization
-    clean_name = re.sub(r'[^0-9a-zA-Z]+', '', unidecode(name))
-    filename = f'certificados/{today}_{certificate_name}_{clean_name}.pdf' # generates certificate filename 
-    c = canvas.Canvas(filename, pagesize=[A4[1], A4[0]])         # initializes PDF canvas
-
-    # custom font
-    pdfmetrics.registerFont(TTFont('LibreCaslon',        'LibreCaslonText-Regular.ttf'))
-    pdfmetrics.registerFont(TTFont('LibreCaslon-Italic', 'LibreCaslonText-Italic.ttf'))
-    pdfmetrics.registerFont(TTFont('LibreCaslon-Bold',   'LibreCaslonText-Bold.ttf'))
-
-    # draw certificate background
-    try:
-        if background_path: c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
-        else: print("Imagem de fundo não especificada")
-    except OSError as e:
-        print(f"Imagem de fundo não encontrada")
-        sys.exit()
-
+def draw_febracm_avaliadores(c, certificate_string, signatures):
     # certificate body
     c.setFillColorRGB(0.01, 0.01, 0.01) # set font color
     y = 16 * cm # initial y height
@@ -96,6 +78,30 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
             c.drawString(x, y, string, charSpace=-0.25)
             y -= 0.46 * cm
 
+    return
+
+def generate_certificate(name, certificate_name, today, background_path, certificate_string, signatures, template):
+    # canvas initialization
+    clean_name = re.sub(r'[^0-9a-zA-Z]+', '', unidecode(name))
+    filename = f'certificados/{today}_{certificate_name}_{clean_name}.pdf' # generates certificate filename 
+    c = canvas.Canvas(filename, pagesize=[A4[1], A4[0]])         # initializes PDF canvas
+
+    # custom font
+    pdfmetrics.registerFont(TTFont('LibreCaslon',        'LibreCaslonText-Regular.ttf'))
+    pdfmetrics.registerFont(TTFont('LibreCaslon-Italic', 'LibreCaslonText-Italic.ttf'))
+    pdfmetrics.registerFont(TTFont('LibreCaslon-Bold',   'LibreCaslonText-Bold.ttf'))
+
+    # draw certificate background
+    try:
+        if background_path: c.drawImage(background_path, 0, 0, width=A4[1], height=A4[0])
+        else: print("Imagem de fundo não especificada")
+    except OSError as e:
+        print(f"Imagem de fundo não encontrada")
+        sys.exit()
+
+    # draw selected template
+    if(template == "febracm_avaliadores"): draw_febracm_avaliadores(c, certificate_string, signatures)
+
     # save as PDF file
     c.save()
 
@@ -105,6 +111,7 @@ if __name__ == "__main__":
     parser.add_argument("pessoas", help="[csv] Dados das pessoas que serão utilizados para geração dos certificados")
     parser.add_argument("-a", "--assinantes", help="[csv] Dados das pessoas que assinarão os certificados")
     parser.add_argument("-b", "--background", help="[image] Imagem de fundo do certificado")
+    parser.add_argument("-t", "--template", help="Escolha um template pronto para o certificado", choices=["febracm_avaliadores"], default="febracm_avaliadores")
     args = parser.parse_args()
 
     # data loading
@@ -129,4 +136,4 @@ if __name__ == "__main__":
     for i, person in enumerate(data):
         print_progress(i, total)
         certificate_string = generate_strings(person['nome'], person['cargo'], person['horas'])
-        generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures)
+        generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures, args.template)
