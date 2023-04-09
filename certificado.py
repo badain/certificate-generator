@@ -114,11 +114,14 @@ if __name__ == "__main__":
             data.append(row)
 
     signatures = []
-    with open(f'{args.assinantes}', newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
-        for row in reader:
-            signatures.append(row)
-
+    try:
+        with open(f'{args.assinantes}', newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
+            for row in reader:
+                signatures.append(row)
+    except OSError as e:
+        print(f"Arquivo de assinantes não especificado")
+    
     # generate certificates
     today = date.today() # filename
     total = len(data)    # progress
