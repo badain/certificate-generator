@@ -1,0 +1,30 @@
+[
+    {
+        "string": "Certificamos que",
+        "style": "italic"
+    },
+    {
+        "string": "$nome",
+        "style": "bold"
+    },
+    {
+        "string": "participou na 21ª Feira Brasileira de Ciência e Engenharia da",
+        "style": "italic"
+    },
+    {
+        "string": "$cargo",
+        "style": "bold"
+    },
+    {
+        "string": "dos prêmios",
+        "style": "italic"
+    },
+    {
+        "string": "Ciências Moleculares de Mérito Acadêmico e de Interdisciplinaridade",
+        "style": "regular"
+    },
+    {
+        "string": "com carga horária de $horas horas",
+        "style": "italic"
+    }
+]

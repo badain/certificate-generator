@@ -8,6 +8,7 @@ from reportlab.pdfbase.ttfonts import TTFont # custom font support
 
 # Python Modules
 import argparse                 # argument parsing
+import json                     # strings parsing
 import sys                      # exception handling
 import csv                      # data import
 import re                       # filename processing
@@ -20,37 +21,27 @@ def print_progress(i, total):
 
     return
 
-def generate_strings(name, role, hours):
-    return [
-        {
-            "string": "Certificamos que",
-            "style": "italic"
-        },
-        {
-            "string": name,
-            "style": "bold"
-        },
-        {
-            "string": "participou na 21ª Feira Brasileira de Ciência e Engenharia da",
-            "style": "italic"
-        },
-        {
-            "string": role,
-            "style": "bold"
-        },
-        {
-            "string": "dos prêmios",
-            "style": "italic"
-        },
-        {
-            "string": "Ciências Moleculares de Mérito Acadêmico e de Interdisciplinaridade",
-            "style": "regular"
-        },
-        {
-            "string": f"com carga horária de {hours} horas",
-            "style": "italic"
-        }
-    ]
+def replace_json_variables(json_file_path, variables):
+    with open(json_file_path, 'r', encoding='utf-8') as json_file:
+        json_data = json.load(json_file)
+
+    # Recursively replace variables in the JSON data
+    def replace_variables(obj):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if isinstance(value, str):
+                    for var_key, var_value in variables.items():
+                        value = value.replace(f'${var_key}', var_value)
+                    obj[key] = value
+                else:
+                    replace_variables(value)
+        elif isinstance(obj, list):
+            for i in range(len(obj)):
+                replace_variables(obj[i])
+
+    replace_variables(json_data)
+
+    return json_data
 
 def draw_febracm_avaliadores(c, certificate_string, signatures):
     # certificate body
@@ -111,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("pessoas", help="[csv] Dados das pessoas que serão utilizados para geração dos certificados")
     parser.add_argument("-a", "--assinantes", help="[csv] Dados das pessoas que assinarão os certificados")
     parser.add_argument("-b", "--background", help="[image] Imagem de fundo do certificado")
-    parser.add_argument("-t", "--template", help="Escolha um template pronto para o certificado", choices=["febracm_avaliadores"], default="febracm_avaliadores")
+    parser.add_argument("-s", "--strings", help="[json] Texto do certificado", default="febracm_vencedores")
     args = parser.parse_args()
 
     # data loading
@@ -135,5 +126,5 @@ if __name__ == "__main__":
     total = len(data)    # progress
     for i, person in enumerate(data):
         print_progress(i, total)
-        certificate_string = generate_strings(person['nome'], person['cargo'], person['horas'])
+        certificate_string = replace_json_variables(f"{args.strings}", person)
         generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures, args.template)

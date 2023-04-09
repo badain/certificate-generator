@@ -1,0 +1,30 @@
+[
+    {
+        "string": "Concedemos a",
+        "style": "italic"
+    },
+    {
+        "string": "$nome",
+        "style": "bold"
+    },
+    {
+        "string": "o certificado de destaque do ano em",
+        "style": "italic"
+    },
+    {
+        "string": "$premio",
+        "style": "bold"
+    },
+    {
+        "string": "pela sua performance marcante e sua dedicação em seu projeto",
+        "style": "italic"
+    },
+    {
+        "string": "$projeto",
+        "style": "regular"
+    },
+    {
+        "string": "apresentado durante a 21ª Feira Brasileira de Ciência e Engenharia",
+        "style": "italic"
+    }
+]
