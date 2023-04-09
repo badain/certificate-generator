@@ -7,6 +7,7 @@ from reportlab.pdfbase import pdfmetrics     # custom font support
 from reportlab.pdfbase.ttfonts import TTFont # custom font support
 
 # Python Modules
+import argparse                 # argument parsing
 import sys                      # exception handling
 import csv                      # data import
 import re                       # filename processing
@@ -98,21 +99,30 @@ def generate_certificate(name, certificate_name, today, background_path, certifi
     c.save()
 
 if __name__ == "__main__":
+    # arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pessoas", help="[csv] Dados das pessoas que serão utilizados para geração dos certificados")
+    parser.add_argument("-a", "--assinantes", help="[csv] Dados das pessoas que assinarão os certificados")
+    parser.add_argument("-b", "--background", help="[image] Imagem de fundo do certificado")
+    args = parser.parse_args()
+
+    # data loading
     data = []
-    with open('pessoas.csv', newline='', encoding='utf-8') as csvfile:
+    with open(f'{args.pessoas}', newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
             data.append(row)
 
     signatures = []
-    with open('signature.csv', newline='', encoding='utf-8') as csvfile:
+    with open(f'{args.assinantes}', newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
             signatures.append(row)
 
-    today = date.today()
-    total = len(data)
+    # generate certificates
+    today = date.today() # filename
+    total = len(data)    # progress
     for i, person in enumerate(data):
         print_progress(i, total)
         certificate_string = generate_strings(person['nome'], person['cargo'], person['horas'])
-        generate_certificate(person['nome'], "FEBRACE", today, "background/background.png", certificate_string, signatures)
+        generate_certificate(person['nome'], "FEBRACE", today, args.background, certificate_string, signatures)
