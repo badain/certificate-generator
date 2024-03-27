@@ -4,6 +4,7 @@ Um programa simples para automatizar a geração de certificados dos avaliadores
 ## Dependências
 - ReportLab `pip install reportlab`
 - Unidecode `pip install unidecode`
+- Fonte [Libre Caslon](https://fonts.google.com/specimen/Libre+Caslon+Text)
 
 ## Uso
 ```
